@@ -38,7 +38,6 @@ The application uses:
 - Java Swing for the UI components
 - Custom button styling with rounded corners
 - Two-stack algorithm for expression evaluation
-- Event-driven architecture for user interactions
 
 ## Implementation Details
 
@@ -54,20 +53,9 @@ The application uses:
 
 - Java Runtime Environment (JRE) 8 or higher
 
-## Future Enhancements
 
-- Memory functions (M+, M-, MR, MC)
-- Scientific calculator mode
-- Calculation history
-- Customizable themes
 
-## License
 
-MIT License
-
-## Author
-
-Copyright © 2025
 
 ---
 
