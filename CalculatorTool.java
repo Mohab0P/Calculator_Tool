@@ -1,11 +1,5 @@
 import javax.swing.*;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.KeyStroke;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -22,20 +16,19 @@ public class CalculatorTool extends JFrame {
     }
 
     private void initUI() {
-        // Use system look and feel for native UI appearance
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } catch(Exception ignored) {}
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {}
 
-        // Layout and container styling
         setLayout(new BorderLayout(5, 5));
         JComponent cp = (JComponent) getContentPane();
         cp.setBackground(new Color(240, 240, 240));
         cp.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Top panel with input field and result label
+        // Top panel for input and result
         JPanel topPanel = new JPanel(new BorderLayout(5, 5));
         topPanel.setBackground(cp.getBackground());
 
-        // Editable input field where user types or clicks numbers/operators
         inputField = new JTextField();
         inputField.setFont(new Font("Monospaced", Font.PLAIN, 24));
         inputField.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -43,7 +36,6 @@ public class CalculatorTool extends JFrame {
         inputField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         topPanel.add(inputField, BorderLayout.NORTH);
 
-        // Result label showing evaluation output
         resultLabel = new JLabel("0", SwingConstants.RIGHT);
         resultLabel.setFont(new Font("Monospaced", Font.BOLD, 32));
         resultLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -51,7 +43,7 @@ public class CalculatorTool extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Enter/Esc key bindings on the input field
+        // Keyboard shortcuts
         InputMap im = inputField.getInputMap(JComponent.WHEN_FOCUSED);
         ActionMap am = inputField.getActionMap();
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "equals");
@@ -77,6 +69,7 @@ public class CalculatorTool extends JFrame {
             }
         });
 
+        // Button panel
         buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(4, 4, 5, 5));
         buttonPanel.setBackground(Color.DARK_GRAY);
@@ -95,8 +88,7 @@ public class CalculatorTool extends JFrame {
             buttonPanel.add(btn);
         }
 
-        // Style buttons: padding and colors
-        // Configure buttonPanel after creation
+        // Style buttons
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         for (Component comp : buttonPanel.getComponents()) {
             if (comp instanceof JButton) {
@@ -123,7 +115,7 @@ public class CalculatorTool extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    // Evaluate a simple expression containing +, -, *, /
+    // Expression evaluator
     private double evaluateExpression(String expr) throws Exception {
         List<String> tokens = new ArrayList<>();
         int i = 0;
@@ -141,8 +133,10 @@ public class CalculatorTool extends JFrame {
                 throw new Exception("Invalid character");
             }
         }
+
         Stack<Double> values = new Stack<>();
         Stack<String> ops = new Stack<>();
+
         for (String token : tokens) {
             if (token.matches("\\d+(\\.\\d+)?")) {
                 values.push(Double.parseDouble(token));
@@ -153,9 +147,11 @@ public class CalculatorTool extends JFrame {
                 ops.push(token);
             }
         }
+
         while (!ops.isEmpty()) {
             computeTop(values, ops);
         }
+
         return values.pop();
     }
 
@@ -176,6 +172,7 @@ public class CalculatorTool extends JFrame {
         }
     }
 
+    // Button click listener
     private class ButtonClickListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -184,20 +181,19 @@ public class CalculatorTool extends JFrame {
                 try {
                     String expr = inputField.getText();
                     double result = evaluateExpression(expr);
+                    inputField.setText(Double.toString(result));
                     resultLabel.setText(Double.toString(result));
                 } catch (Exception ex) {
+                    inputField.setText("Error");
                     resultLabel.setText("Error");
                 }
             } else {
-                // append to input field
                 inputField.setText(inputField.getText() + cmd);
             }
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new CalculatorTool().setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new CalculatorTool().setVisible(true));
     }
 }
